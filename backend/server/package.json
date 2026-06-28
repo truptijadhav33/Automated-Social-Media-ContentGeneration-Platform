@@ -1,0 +1,19 @@
+{
+  "name": "social-media-server",
+  "version": "1.0.0",
+  "description": "Node.js Express API server for the social media platform",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.6.3",
+    "dotenv": "^16.3.1",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.2",
+    "axios": "^1.6.0",
+    "bcryptjs": "^2.4.3"
+  }
+}

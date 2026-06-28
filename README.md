@@ -6,7 +6,7 @@ An end-to-end platform that automatically generates, schedules, and publishes so
 
 ```bash
 # Clone the repo
-git clone <repo-url>
+git clone https://github.com/truptijadhav33/Automated-Social-Media-ContentGeneration-Platform.git
 cd Automated-Social-Media-ContentGeneration-Platform
 
 # Backend setup

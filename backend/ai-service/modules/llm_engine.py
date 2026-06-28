@@ -7,7 +7,7 @@ from openai import (
 
 
 class LLMEngine:
-    """LLM integration engine that generates social media captions via OpenAI GPT-4."""
+    """LLM integration engine that generates social media captions via Groq's free API."""
 
     PLATFORM_SPECS = {
         "linkedin": {
@@ -40,9 +40,12 @@ class LLMEngine:
     }
 
     def __init__(self, api_key: str):
-        """Initialise the LLM engine with an OpenAI API key."""
-        self.client = OpenAI(api_key=api_key)
-        self.model = "gpt-4"
+        """Initialise the LLM engine with a Groq API key."""
+        self.client = OpenAI(
+            api_key=api_key,
+            base_url="https://api.groq.com/openai/v1",
+        )
+        self.model = "llama-3.3-70b-versatile"
 
     def _build_prompt(
         self,
@@ -97,9 +100,9 @@ Return valid JSON with these keys:
             dict with keys: caption, hashtags, variants, char_count
 
         Raises:
-            APITimeoutError: if the OpenAI request times out
-            RateLimitError: if OpenAI rate-limit is hit
-            APIError: for any other OpenAI API error
+            APITimeoutError: if the Groq request times out
+            RateLimitError: if Groq rate-limit is hit
+            APIError: for any other Groq API error
         """
         prompt = self._build_prompt(feature_brief, platform, tone)
 
@@ -115,18 +118,21 @@ Return valid JSON with these keys:
                 timeout=30,
             )
         except APITimeoutError:
-            return {"error": "OpenAI request timed out. Please try again."}
+            return {"error": "Groq request timed out. Please try again."}
         except RateLimitError:
-            return {"error": "Rate limit exceeded. Please wait and retry."}
+            return {"error": "Groq rate limit exceeded. Please wait and retry."}
         except APIError as e:
-            return {"error": f"OpenAI API error: {e}"}
+            return {"error": f"Groq API error: {e}"}
 
-        raw = response.choices[0].message.content
+        raw = response.choices[0].message.content.strip()
 
         import json
+        import re
+
+        cleaned = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw, flags=re.DOTALL).strip()
 
         try:
-            result = json.loads(raw)
+            result = json.loads(cleaned)
         except json.JSONDecodeError:
             result = {
                 "caption": raw,
@@ -142,6 +148,11 @@ Return valid JSON with these keys:
 
 
 if __name__ == "__main__":
+    from dotenv import load_dotenv
+    import os
+
+    load_dotenv()
+
     sample_brief = {
         "name": "Smart Scheduling",
         "description": (
@@ -153,10 +164,10 @@ if __name__ == "__main__":
         "tone": "informative",
     }
 
-    engine = LLMEngine(api_key="sk-test-placeholder")
+    engine = LLMEngine(api_key=os.getenv("GROQ_API_KEY", "gsk_placeholder"))
     for plat in ["linkedin", "twitter", "instagram", "whatsapp"]:
         result = engine.generate_captions(sample_brief, platform=plat, tone="informative")
         if "error" in result:
-            print(f"[{plat.upper()}] Would call OpenAI -> {result['error']}")
+            print(f"[{plat.upper()}] Would call Groq -> {result['error']}")
         else:
             print(f"[{plat.upper()}] caption preview: {result.get('caption', '')[:60]}...")

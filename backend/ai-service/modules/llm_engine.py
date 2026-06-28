@@ -1,0 +1,162 @@
+from openai import OpenAI
+from openai import (
+    APITimeoutError,
+    RateLimitError,
+    APIError,
+)
+
+
+class LLMEngine:
+    """LLM integration engine that generates social media captions via OpenAI GPT-4."""
+
+    PLATFORM_SPECS = {
+        "linkedin": {
+            "max_chars": 3000,
+            "style": "professional, detailed, value-driven",
+            "hashtag_style": "2-3 relevant hashtags at the end",
+        },
+        "twitter": {
+            "max_chars": 280,
+            "style": "punchy, concise, attention-grabbing",
+            "hashtag_style": "1-2 hashtags woven naturally",
+        },
+        "instagram": {
+            "max_chars": 2200,
+            "style": "engaging, visual-descriptive, community-oriented",
+            "hashtag_style": "caption first, then a separate block of 5-10 hashtags",
+        },
+        "whatsapp": {
+            "max_chars": 1024,
+            "style": "short, conversational, personal",
+            "hashtag_style": "no hashtags",
+        },
+    }
+
+    TONE_GUIDES = {
+        "professional": "Use formal language, industry terminology, and a confident tone.",
+        "hype": "Use energetic language, emojis sparingly, and enthusiastic phrasing.",
+        "informative": "Use clear, factual language. Educate the reader step by step.",
+        "casual": "Use friendly, everyday language as if talking to a peer.",
+    }
+
+    def __init__(self, api_key: str):
+        """Initialise the LLM engine with an OpenAI API key."""
+        self.client = OpenAI(api_key=api_key)
+        self.model = "gpt-4"
+
+    def _build_prompt(
+        self,
+        brief: dict,
+        platform: str,
+        tone: str,
+    ) -> str:
+        """Build a detailed prompt string based on the feature brief, platform, and tone."""
+        spec = self.PLATFORM_SPECS.get(platform, self.PLATFORM_SPECS["linkedin"])
+        tone_guide = self.TONE_GUIDES.get(tone, self.TONE_GUIDES["informative"])
+
+        return f"""
+You are a social media content strategist. Write a post announcing a new feature.
+
+FEATURE BRIEF
+- Name: {brief.get('name', 'Untitled Feature')}
+- Description: {brief.get('description', '')}
+- Key Benefit: {brief.get('benefit', '')}
+- Target Platforms: {', '.join(brief.get('platforms', ['web']))}
+- Tone: {tone}
+
+PLATFORM: {platform}
+PLATFORM GUIDELINES
+- Max characters: {spec['max_chars']}
+- Style: {spec['style']}
+- Hashtag rule: {spec['hashtag_style']}
+
+TONE GUIDELINES
+{tone_guide}
+
+Return valid JSON with these keys:
+- "caption": the main post text (string)
+- "hashtags": array of suggested hashtags (strings)
+- "variants": array of 2 alternative caption drafts (strings)
+- "char_count": character count of the main caption (integer)
+"""
+
+    def generate_captions(
+        self,
+        feature_brief: dict,
+        platform: str = "linkedin",
+        tone: str = "informative",
+    ) -> dict:
+        """Generate social-media captions for a feature announcement.
+
+        Args:
+            feature_brief: dict with keys name, description, benefit, platforms, tone
+            platform: target platform (linkedin, twitter, instagram, whatsapp)
+            tone: writing tone (professional, hype, informative, casual)
+
+        Returns:
+            dict with keys: caption, hashtags, variants, char_count
+
+        Raises:
+            APITimeoutError: if the OpenAI request times out
+            RateLimitError: if OpenAI rate-limit is hit
+            APIError: for any other OpenAI API error
+        """
+        prompt = self._build_prompt(feature_brief, platform, tone)
+
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You output only valid JSON."},
+                    {"role": "user", "content": prompt},
+                ],
+                temperature=0.7,
+                max_tokens=800,
+                timeout=30,
+            )
+        except APITimeoutError:
+            return {"error": "OpenAI request timed out. Please try again."}
+        except RateLimitError:
+            return {"error": "Rate limit exceeded. Please wait and retry."}
+        except APIError as e:
+            return {"error": f"OpenAI API error: {e}"}
+
+        raw = response.choices[0].message.content
+
+        import json
+
+        try:
+            result = json.loads(raw)
+        except json.JSONDecodeError:
+            result = {
+                "caption": raw,
+                "hashtags": [],
+                "variants": [],
+                "char_count": len(raw),
+            }
+
+        result.setdefault("hashtags", [])
+        result.setdefault("variants", [])
+        result.setdefault("char_count", len(result.get("caption", "")))
+        return result
+
+
+if __name__ == "__main__":
+    sample_brief = {
+        "name": "Smart Scheduling",
+        "description": (
+            "AI-powered auto-scheduler that picks the best posting time "
+            "based on audience activity."
+        ),
+        "benefit": "Save hours of manual planning and boost engagement by 40%",
+        "platforms": ["linkedin", "twitter", "instagram", "whatsapp"],
+        "tone": "informative",
+    }
+
+    engine = LLMEngine(api_key="sk-test-placeholder")
+    for plat in ["linkedin", "twitter", "instagram", "whatsapp"]:
+        result = engine.generate_captions(sample_brief, platform=plat, tone="informative")
+        if "error" in result:
+            print(f"[{plat.upper()}] Would call OpenAI -> {result['error']}")
+        else:
+            print(f"[{plat.upper()}] caption preview: {result.get('caption', '')[:60]}...")

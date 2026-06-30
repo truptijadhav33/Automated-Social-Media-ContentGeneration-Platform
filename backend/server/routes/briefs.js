@@ -1,14 +1,12 @@
 const express = require('express');
 const FeatureBrief = require('../models/FeatureBrief');
+const GeneratedContent = require('../models/GeneratedContent');
+const validateBrief = require('../middleware/validateBrief');
 const router = express.Router();
 
-router.post('/', async (req, res) => {
+router.post('/', validateBrief, async (req, res) => {
   try {
     const { featureName, description, keyBenefit, platforms, tone } = req.body;
-
-    if (!featureName) {
-      return res.status(400).json({ error: 'featureName is required' });
-    }
 
     const brief = new FeatureBrief({
       userId: req.user?.id || 'temp-user-001',
@@ -37,6 +35,15 @@ router.get('/', async (req, res) => {
     res.json({ briefs });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/:briefId/content', async (req, res) => {
+  try {
+    const docs = await GeneratedContent.find({ briefId: req.params.briefId });
+    res.json({ data: docs });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

@@ -146,6 +146,25 @@ Return valid JSON with these keys:
         result.setdefault("char_count", len(result.get("caption", "")))
         return result
 
+    def generate_variants(self, feature_brief, platform, tone, num_variants=2):
+        """Generate N alternative captions by varying temperature."""
+        variants = []
+        for i in range(num_variants):
+            temperature = 0.6 + (i * 0.25)
+            prompt = self._build_prompt(feature_brief, platform, tone)
+
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are a social media expert."},
+                    {"role": "user", "content": prompt},
+                ],
+                temperature=temperature,
+                max_tokens=500,
+            )
+            variants.append(response.choices[0].message.content)
+        return variants
+
 
 if __name__ == "__main__":
     from dotenv import load_dotenv

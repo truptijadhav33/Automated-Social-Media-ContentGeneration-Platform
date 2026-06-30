@@ -1,9 +1,13 @@
 import logging
 import time
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from dotenv import load_dotenv
 import os
+from datetime import datetime
+
+from fastapi import FastAPI, HTTPException
+from dotenv import load_dotenv
+from pydantic import BaseModel
+
+from modules.llm_engine import LLMEngine
 
 logging.basicConfig(
     level=logging.INFO,
@@ -15,18 +19,22 @@ load_dotenv()
 
 app = FastAPI(title="AI Content Service")
 
-from modules.llm_engine import LLMEngine
-
-engine = LLMEngine(api_key=os.getenv("GROQ_API_KEY", ""))
+llm_engine: LLMEngine | None = None
 
 
-class GenerateRequest(BaseModel):
-    briefId: str
-    featureName: str
+class CaptionRequest(BaseModel):
+    feature_name: str
     description: str
-    keyBenefit: str
-    platforms: list[str]
+    key_benefit: str
     tone: str
+    platform: str
+
+
+@app.on_event("startup")
+async def startup_event():
+    global llm_engine
+    llm_engine = LLMEngine(os.getenv("GROQ_API_KEY"))
+    logger.info("LLMEngine initialized with Groq")
 
 
 @app.get("/health")
@@ -35,28 +43,35 @@ async def health():
 
 
 @app.post("/generate-captions")
-async def generate_captions(req: GenerateRequest):
-    feature_brief = {
-        "name": req.featureName,
-        "description": req.description,
-        "benefit": req.keyBenefit,
-        "platforms": req.platforms,
-        "tone": req.tone,
-    }
+async def generate_captions(request: CaptionRequest):
+    try:
+        feature_brief = {
+            "name": request.feature_name,
+            "description": request.description,
+            "benefit": request.key_benefit,
+        }
 
-    platform = req.platforms[0]
-    tone = req.tone
+        start = time.time()
+        result = llm_engine.generate_captions(
+            feature_brief, request.platform, request.tone
+        )
+        elapsed = time.time() - start
+        logger.info(f"Generated {request.platform} caption in {elapsed:.2f}s")
 
-    start = time.time()
-    result = engine.generate_captions(feature_brief, platform, tone)
-    elapsed = time.time() - start
-    logger.info(f"Generated {platform} caption in {elapsed:.2f}s")
+        if "error" in result:
+            raise HTTPException(status_code=502, detail=result["error"])
 
-    if "error" in result:
-        raise HTTPException(status_code=502, detail=result["error"])
+        result["variants"] = llm_engine.generate_variants(
+            feature_brief, request.platform, request.tone, num_variants=2
+        )
 
-    result["variants"] = engine.generate_variants(
-        feature_brief, platform, tone, num_variants=2
-    )
-
-    return {"success": True, "data": result}
+        return {
+            "success": True,
+            "data": result,
+            "generated_at": datetime.now().isoformat(),
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating caption: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

@@ -1,30 +1,49 @@
 const mongoose = require('mongoose');
 
-const generatedContentSchema = new mongoose.Schema({
+const GeneratedContentSchema = new mongoose.Schema({
   briefId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Brief',
-    required: true,
+    ref: 'FeatureBrief',
+    required: true
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
   platform: {
     type: String,
-    required: true,
     enum: ['linkedin', 'twitter', 'instagram', 'whatsapp'],
+    required: true
   },
   caption: {
     type: String,
-    required: true,
+    required: true
   },
   hashtags: [String],
-  variants: [String],
   charCount: Number,
+  variants: [String],
+  imageUrl: String,
   publishStatus: {
     type: String,
     enum: ['draft', 'published', 'scheduled'],
-    default: 'draft',
+    default: 'draft'
   },
   publishedAt: Date,
   scheduledFor: Date,
-}, { timestamps: true });
+  apiResponse: mongoose.Schema.Types.Mixed,
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
 
-module.exports = mongoose.model('GeneratedContent', generatedContentSchema);
+GeneratedContentSchema.index({ briefId: 1 });
+GeneratedContentSchema.index({ userId: 1 });
+GeneratedContentSchema.index({ publishStatus: 1 });
+
+module.exports = mongoose.model('GeneratedContent', GeneratedContentSchema);

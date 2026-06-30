@@ -10,10 +10,14 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
-// Routes
+// Routes — auth before tempAuth so register/login aren't blocked
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/briefs', require('./routes/briefs'));
+
+const tempAuth = require('./middleware/tempAuth');
+app.use('/api', tempAuth);
+
 app.use('/api/content', require('./routes/content'));
+app.use('/api/briefs', require('./routes/briefs'));
 
 // Health check
 app.get('/health', (_req, res) => {

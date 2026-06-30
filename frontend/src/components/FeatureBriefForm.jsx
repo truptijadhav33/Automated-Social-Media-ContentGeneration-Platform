@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 
 export default function FeatureBriefForm({ onSuccess, onLoadingChange }) {
   const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
   const [formData, setFormData] = useState({
     featureName: '',
     description: '',
@@ -16,6 +17,13 @@ export default function FeatureBriefForm({ onSuccess, onLoadingChange }) {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    setFieldErrors(prev => {
+      if (!prev[name]) return prev;
+      const next = { ...prev };
+      delete next[name];
+      return next;
+    });
     
     if (type === 'checkbox') {
       setFormData(prev => ({
@@ -74,8 +82,22 @@ export default function FeatureBriefForm({ onSuccess, onLoadingChange }) {
       onSuccess(briefId, contentResponse.data.captions);
 
     } catch (error) {
-      console.error('Error:', error);
-      toast.error(error.response?.data?.error || 'Something went wrong');
+      if (error.response?.status === 400) {
+        const message = error.response.data.error || 'Please check your input';
+        toast.error(message);
+        const errors = {};
+        const fields = ['featureName', 'description', 'keyBenefit', 'platforms', 'tone'];
+        for (const field of fields) {
+          if (message.toLowerCase().includes(field.toLowerCase())) {
+            errors[field] = message;
+          }
+        }
+        setFieldErrors(errors);
+      } else if (error.response?.status === 429) {
+        toast.error('Too many requests — please wait a moment and try again');
+      } else {
+        toast.error('Something went wrong. Please try again.');
+      }
     } finally {
       setLoading(false);
       onLoadingChange?.(false);
@@ -92,9 +114,12 @@ export default function FeatureBriefForm({ onSuccess, onLoadingChange }) {
           value={formData.featureName}
           onChange={handleChange}
           placeholder="e.g., Live Collaboration Mode"
-          className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"
+          className={`w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white ${fieldErrors.featureName ? 'border-red-500' : ''}`}
           required
         />
+        {fieldErrors.featureName && (
+          <p className="text-red-500 text-xs mt-1">{fieldErrors.featureName}</p>
+        )}
       </div>
 
       <div>
@@ -105,9 +130,12 @@ export default function FeatureBriefForm({ onSuccess, onLoadingChange }) {
           onChange={handleChange}
           placeholder="2-3 sentences describing the feature"
           rows="3"
-          className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"
+          className={`w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white ${fieldErrors.description ? 'border-red-500' : ''}`}
           required
         />
+        {fieldErrors.description && (
+          <p className="text-red-500 text-xs mt-1">{fieldErrors.description}</p>
+        )}
       </div>
 
       <div>
@@ -118,9 +146,12 @@ export default function FeatureBriefForm({ onSuccess, onLoadingChange }) {
           value={formData.keyBenefit}
           onChange={handleChange}
           placeholder="e.g., No more version conflicts"
-          className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"
+          className={`w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white ${fieldErrors.keyBenefit ? 'border-red-500' : ''}`}
           required
         />
+        {fieldErrors.keyBenefit && (
+          <p className="text-red-500 text-xs mt-1">{fieldErrors.keyBenefit}</p>
+        )}
       </div>
 
       <div>
@@ -140,6 +171,9 @@ export default function FeatureBriefForm({ onSuccess, onLoadingChange }) {
             </label>
           ))}
         </div>
+        {fieldErrors.platforms && (
+          <p className="text-red-500 text-xs mt-1">{fieldErrors.platforms}</p>
+        )}
       </div>
 
       <div>
@@ -148,13 +182,16 @@ export default function FeatureBriefForm({ onSuccess, onLoadingChange }) {
           name="tone"
           value={formData.tone}
           onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"
+          className={`w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white ${fieldErrors.tone ? 'border-red-500' : ''}`}
         >
           <option value="professional">Professional</option>
           <option value="hype">Hype / Excited</option>
           <option value="informative">Informative</option>
           <option value="casual">Casual</option>
         </select>
+        {fieldErrors.tone && (
+          <p className="text-red-500 text-xs mt-1">{fieldErrors.tone}</p>
+        )}
       </div>
 
       <button

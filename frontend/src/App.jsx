@@ -3,6 +3,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BaseLayout from "./components/BaseLayout";
 import Launch from "./pages/Launch";
+import History from "./pages/History";
 
 function App() {
   return (
@@ -15,10 +16,7 @@ function App() {
             element={<h1 className="text-2xl font-bold">Home</h1>}
           />
           <Route path="/launch" element={<Launch />} />
-          <Route
-            path="/history"
-            element={<h1 className="text-2xl font-bold">History</h1>}
-          />
+          <Route path="/history" element={<History />} />
         </Route>
       </Routes>
     </BrowserRouter>

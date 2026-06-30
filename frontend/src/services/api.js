@@ -35,6 +35,7 @@ export const apiService = {
   submitBrief: (data) => api.post('/briefs', data),
   getBrief: (id) => api.get(`/briefs/${id}`),
   getBriefs: () => api.get('/briefs'),
+  getBriefContent: (briefId) => api.get(`/briefs/${briefId}/content`),
   
   // Content generation
   generateContent: (briefId, tone, platforms) =>
@@ -46,6 +47,14 @@ export const apiService = {
   
   getContent: (briefId) => api.get(`/content/${briefId}`),
   
+  // Variant selection
+  selectVariant: (contentId, variantIndex) =>
+    api.put(`/api/content/${contentId}/select-variant`, { variantIndex }),
+
+  // Status management
+  updateStatus: (contentId, status, scheduledFor) =>
+    api.put(`/api/content/${contentId}/status`, { status, scheduledFor }),
+
   // Publishing (later)
   publishToSocial: (contentId, platforms) =>
     api.post('/publish', { contentId, platforms })

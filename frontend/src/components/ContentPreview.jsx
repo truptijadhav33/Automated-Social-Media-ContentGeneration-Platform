@@ -23,6 +23,8 @@ export default function ContentPreview({ captions, isLoading }) {
   const [copiedHashtag, setCopiedHashtag] = useState(null);
   const [shareModal, setShareModal] = useState(null);
 
+  const closeShareModal = () => setShareModal(null);
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64" role="status" aria-label="Generating content, please wait">
@@ -189,14 +191,14 @@ export default function ContentPreview({ captions, isLoading }) {
         <div className="flex flex-wrap gap-2 mb-4">
           <button
             onClick={() => exportCaptions("json")}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-slate-700 text-white rounded hover:bg-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
+            className="flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] sm:min-h-0 text-sm bg-slate-700 text-white rounded hover:bg-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
             aria-label="Export captions as JSON"
           >
             <Icons.FileJson size={16} /> Export JSON
           </button>
           <button
             onClick={() => exportCaptions("md")}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-slate-700 text-white rounded hover:bg-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
+            className="flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] sm:min-h-0 text-sm bg-slate-700 text-white rounded hover:bg-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
             aria-label="Export captions as Markdown"
           >
             <Icons.FileText size={16} /> Export Markdown
@@ -234,7 +236,7 @@ export default function ContentPreview({ captions, isLoading }) {
                 {/* Copy caption */}
                 <button
                   onClick={() => copyToClipboard(displayText, platform)}
-                  className="flex items-center gap-1 text-xs bg-purple-600 text-white px-2.5 py-1.5 rounded hover:bg-purple-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="flex items-center justify-center gap-1 text-xs bg-purple-600 text-white px-3 min-h-[44px] sm:min-h-0 sm:px-2.5 sm:py-1.5 rounded hover:bg-purple-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400"
                   aria-label="Copy caption to clipboard"
                 >
                   {copiedCaption === platform ? <Icons.Check size={14} /> : <Icons.Copy size={14} />}
@@ -244,7 +246,7 @@ export default function ContentPreview({ captions, isLoading }) {
                 {/* Share */}
                 <button
                   onClick={() => handleShare(platform, data)}
-                  className="flex items-center gap-1 text-xs bg-blue-600 text-white px-2.5 py-1.5 rounded hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="flex items-center justify-center gap-1 text-xs bg-blue-600 text-white px-3 min-h-[44px] sm:min-h-0 sm:px-2.5 sm:py-1.5 rounded hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400"
                   aria-label="Share this content"
                 >
                   <Icons.Share2 size={14} /> Share
@@ -254,7 +256,7 @@ export default function ContentPreview({ captions, isLoading }) {
                 {data.images?.length > 0 && (
                   <button
                     onClick={() => data.images.forEach((img, i) => downloadImage(img, `${platform}-${i + 1}.png`))}
-                    className="flex items-center gap-1 text-xs bg-emerald-600 text-white px-2.5 py-1.5 rounded hover:bg-emerald-700 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                    className="flex items-center justify-center gap-1 text-xs bg-emerald-600 text-white px-3 min-h-[44px] sm:min-h-0 sm:px-2.5 sm:py-1.5 rounded hover:bg-emerald-700 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400"
                     aria-label="Download images"
                   >
                     <Icons.Image size={14} /> Images
@@ -278,7 +280,7 @@ export default function ContentPreview({ captions, isLoading }) {
                     <button
                       key={label}
                       onClick={() => handleVariantSelect(platform, data, idx)}
-                      className={`text-xs px-2 py-1 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 ${
+                      className={`text-xs px-3 min-h-[44px] sm:min-h-0 sm:px-2 sm:py-1 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400 ${
                         isActive
                           ? "bg-purple-600 text-white"
                           : "bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-500"
@@ -307,7 +309,7 @@ export default function ContentPreview({ captions, isLoading }) {
                 </div>
                 <button
                   onClick={() => copyHashtags(data.hashtags, platform)}
-                  className="flex items-center gap-1 text-xs bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 shrink-0"
+                  className="flex items-center justify-center gap-1 text-xs bg-gray-500 text-white px-3 min-h-[44px] sm:min-h-0 sm:px-2 sm:py-1 rounded hover:bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 shrink-0"
                   aria-label="Copy hashtags to clipboard"
                 >
                   {copiedHashtag === platform ? <Icons.Check size={12} /> : <Icons.Hash size={12} />}
@@ -346,19 +348,19 @@ export default function ContentPreview({ captions, isLoading }) {
               <div className="flex flex-wrap gap-1">
                 <button
                   onClick={() => handleStatusUpdate(platform, data, "published")}
-                  className="text-xs px-2 py-1 rounded bg-green-600 text-white hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-400"
+                  className="text-xs px-3 min-h-[44px] sm:min-h-0 sm:px-2 sm:py-1 rounded bg-green-600 text-white hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-400"
                 >
                   Publish
                 </button>
                 <button
                   onClick={() => setSchedulingPlatform(schedulingPlatform === platform ? null : platform)}
-                  className="text-xs px-2 py-1 rounded bg-amber-600 text-white hover:bg-amber-700 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="text-xs px-3 min-h-[44px] sm:min-h-0 sm:px-2 sm:py-1 rounded bg-amber-600 text-white hover:bg-amber-700 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400"
                 >
                   Schedule
                 </button>
                 <button
                   onClick={() => handleStatusUpdate(platform, data, "draft")}
-                  className="text-xs px-2 py-1 rounded bg-gray-600 text-white hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400"
+                  className="text-xs px-3 min-h-[44px] sm:min-h-0 sm:px-2 sm:py-1 rounded bg-gray-600 text-white hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400"
                 >
                   Draft
                 </button>
@@ -393,7 +395,8 @@ export default function ContentPreview({ captions, isLoading }) {
       {shareModal && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-          onClick={() => setShareModal(null)}
+          onClick={closeShareModal}
+          onKeyDown={(e) => { if (e.key === "Escape") closeShareModal(); }}
           role="dialog"
           aria-modal="true"
           aria-label="Share link"
@@ -405,7 +408,7 @@ export default function ContentPreview({ captions, isLoading }) {
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-semibold text-lg">Share Content</h3>
               <button
-                onClick={() => setShareModal(null)}
+                onClick={closeShareModal}
                 className="p-1 rounded hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
                 aria-label="Close modal"
               >

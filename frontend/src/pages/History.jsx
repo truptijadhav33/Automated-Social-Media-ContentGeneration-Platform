@@ -70,8 +70,8 @@ export default function History() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-        <div className="container mx-auto px-4">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 sm:py-8">
+        <div className="max-w-5xl mx-auto px-4">
           <div className="flex justify-center items-center h-64" role="status" aria-label="Loading briefs">
             <div className="text-center">
               <svg className="animate-spin h-8 w-8 mx-auto mb-4 text-violet-600 dark:text-violet-400" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -88,17 +88,17 @@ export default function History() {
 
   if (briefs.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-8 text-center">History</h1>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 sm:py-8">
+        <div className="max-w-5xl mx-auto px-4">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center text-slate-800 dark:text-slate-100">History</h1>
           <div className="text-center py-16">
             <p className="text-xl text-gray-500 dark:text-gray-400 mb-4">No launches yet</p>
-            <Link
-              to="/launch"
-              className="inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700"
-            >
-              Launch Your First Feature
-            </Link>
+              <Link
+                to="/launch"
+                className="inline-block bg-purple-600 text-white px-6 min-h-[48px] leading-[48px] rounded-lg hover:bg-purple-700 transition-colors focus:outline focus:outline-2 focus:outline-violet-500"
+              >
+                Launch Your First Feature
+              </Link>
           </div>
         </div>
       </div>
@@ -106,9 +106,9 @@ export default function History() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-      <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8 text-center">History</h1>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 sm:py-8">
+      <div className="max-w-5xl mx-auto px-4">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center text-slate-800 dark:text-slate-100">History</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {briefs.map((brief) => (
@@ -137,7 +137,7 @@ export default function History() {
                   </span>
                   <button
                     onClick={() => handleViewContent(brief._id)}
-                    className="text-sm bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700 transition-colors focus:outline focus:outline-2 focus:outline-violet-500"
+                    className="text-sm bg-purple-600 text-white px-4 min-h-[44px] sm:min-h-0 sm:px-3 sm:py-1 rounded hover:bg-purple-700 transition-colors focus:outline focus:outline-2 focus:outline-violet-500"
                     aria-label={expandedId === brief._id ? `Hide content for ${brief.featureName || brief.name || 'this brief'}` : `View content for ${brief.featureName || brief.name || 'this brief'}`}
                   >
                     {expandedId === brief._id ? 'Hide' : 'View Content'}

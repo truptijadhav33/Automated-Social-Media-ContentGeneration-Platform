@@ -113,7 +113,7 @@ export default function FeatureBriefForm({ onSuccess, onLoadingChange }) {
           value={formData.featureName}
           onChange={handleChange}
           placeholder="e.g., Live Collaboration Mode"
-          className={`w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-slate-600 ${
+          className={`w-full px-4 py-2 min-h-[44px] border rounded-lg dark:bg-gray-700 dark:text-white dark:border-slate-600 ${
             fieldErrors.featureName ? "border-red-500" : "border-slate-300"
           } focus:outline focus:outline-2 focus:outline-violet-500`}
           aria-invalid={!!fieldErrors.featureName}
@@ -138,7 +138,7 @@ export default function FeatureBriefForm({ onSuccess, onLoadingChange }) {
           onChange={handleChange}
           placeholder="2-3 sentences describing the feature"
           rows="3"
-          className={`w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-slate-600 ${
+          className={`w-full px-4 py-2 min-h-[44px] border rounded-lg dark:bg-gray-700 dark:text-white dark:border-slate-600 ${
             fieldErrors.description ? "border-red-500" : "border-slate-300"
           } focus:outline focus:outline-2 focus:outline-violet-500`}
           aria-invalid={!!fieldErrors.description}
@@ -163,7 +163,7 @@ export default function FeatureBriefForm({ onSuccess, onLoadingChange }) {
           value={formData.keyBenefit}
           onChange={handleChange}
           placeholder="e.g., No more version conflicts"
-          className={`w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-slate-600 ${
+          className={`w-full px-4 py-2 min-h-[44px] border rounded-lg dark:bg-gray-700 dark:text-white dark:border-slate-600 ${
             fieldErrors.keyBenefit ? "border-red-500" : "border-slate-300"
           } focus:outline focus:outline-2 focus:outline-violet-500`}
           aria-invalid={!!fieldErrors.keyBenefit}
@@ -210,7 +210,7 @@ export default function FeatureBriefForm({ onSuccess, onLoadingChange }) {
           name="tone"
           value={formData.tone}
           onChange={handleChange}
-          className={`w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-slate-600 ${
+          className={`w-full px-4 py-2 min-h-[44px] border rounded-lg dark:bg-gray-700 dark:text-white dark:border-slate-600 ${
             fieldErrors.tone ? "border-red-500" : "border-slate-300"
           } focus:outline focus:outline-2 focus:outline-violet-500`}
           aria-invalid={!!fieldErrors.tone}
@@ -228,7 +228,7 @@ export default function FeatureBriefForm({ onSuccess, onLoadingChange }) {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-purple-600 text-white py-2.5 rounded-lg font-medium hover:bg-purple-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors focus:outline focus:outline-2 focus:outline-violet-500"
+        className="w-full bg-purple-600 text-white py-2.5 min-h-[48px] rounded-lg font-medium hover:bg-purple-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors focus:outline focus:outline-2 focus:outline-violet-500"
         aria-label={loading ? "Generating content, please wait" : "Generate content"}
       >
         {loading ? "Generating content..." : "Generate Content"}

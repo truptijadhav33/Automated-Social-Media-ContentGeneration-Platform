@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Outlet, NavLink } from "react-router-dom";
 
 const navItems = [
@@ -25,6 +25,16 @@ export default function BaseLayout() {
     document.documentElement.classList.toggle("dark", initial);
   }, []);
 
+  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === "Escape") closeSidebar();
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [closeSidebar]);
+
   const toggleDark = () => {
     const next = !dark;
     setDark(next);
@@ -33,12 +43,12 @@ export default function BaseLayout() {
   };
 
   return (
-    <div className="min-h-screen grid grid-rows-[auto_1fr] grid-cols-1 md:grid-cols-[240px_1fr] bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+    <div className="min-h-screen grid grid-rows-[auto_1fr] grid-cols-1 md:grid-cols-[240px_1fr] bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 xl:max-w-[1200px] xl:mx-auto xl:border-x xl:border-slate-200 xl:dark:border-slate-700">
       {/* Navbar */}
       <header className="md:col-span-2 flex items-center justify-between px-4 py-3 bg-violet-600 dark:bg-violet-800 text-white shadow-sm">
         <div className="flex items-center gap-3">
           <button
-            className="md:hidden p-1.5 rounded hover:bg-violet-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white transition-colors"
+            className="md:hidden flex items-center justify-center rounded hover:bg-violet-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white transition-colors min-w-[44px] min-h-[44px]"
             onClick={() => setSidebarOpen((prev) => !prev)}
             aria-label="Toggle navigation sidebar"
           >
@@ -55,7 +65,7 @@ export default function BaseLayout() {
 
         <button
           onClick={toggleDark}
-          className="p-2 rounded hover:bg-violet-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white transition-colors"
+          className="flex items-center justify-center p-2 rounded hover:bg-violet-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white transition-colors min-w-[44px] min-h-[44px]"
           aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
         >
           {dark ? (
@@ -99,7 +109,7 @@ export default function BaseLayout() {
               end={item.to === "/"}
               onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
-                `px-4 py-2.5 rounded-lg text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500 ${
+                `flex items-center min-h-[44px] px-4 py-2.5 rounded-lg text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500 ${
                   isActive
                     ? "bg-violet-100 dark:bg-violet-900/50 text-violet-700 dark:text-violet-300"
                     : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
@@ -113,7 +123,7 @@ export default function BaseLayout() {
       </aside>
 
       {/* Main content */}
-      <main className="p-6 overflow-auto" id="main-content">
+      <main className="p-4 sm:p-6 overflow-auto" id="main-content">
         <Outlet />
       </main>
     </div>

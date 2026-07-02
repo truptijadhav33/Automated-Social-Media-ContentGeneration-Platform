@@ -13,11 +13,11 @@ export default function Launch() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-      <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8 text-center">Launch Your Feature</h1>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 sm:py-8">
+      <div className="max-w-5xl mx-auto px-4">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center text-slate-800 dark:text-slate-100">Launch Your Feature</h1>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-8">
           {/* Form on left */}
           <div>
             <FeatureBriefForm onSuccess={handleFormSuccess} onLoadingChange={setIsLoading} />
@@ -25,8 +25,8 @@ export default function Launch() {
           
           {/* Preview on right */}
           <div>
-            <div className="sticky top-8">
-              <h2 className="text-xl font-bold mb-4">Generated Content</h2>
+            <div className="lg:sticky lg:top-8">
+              <h2 className="text-lg sm:text-xl font-bold mb-4 text-slate-800 dark:text-slate-100">Generated Content</h2>
               <ContentPreview captions={generatedCaptions} isLoading={isLoading} />
             </div>
           </div>

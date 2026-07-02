@@ -72,10 +72,13 @@ export default function History() {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
         <div className="container mx-auto px-4">
-          <div className="flex justify-center items-center h-64">
+          <div className="flex justify-center items-center h-64" role="status" aria-label="Loading briefs">
             <div className="text-center">
-              <div className="animate-spin text-4xl mb-4">⏳</div>
-              <p>Loading briefs...</p>
+              <svg className="animate-spin h-8 w-8 mx-auto mb-4 text-violet-600 dark:text-violet-400" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              <p className="text-slate-600 dark:text-slate-400">Loading briefs...</p>
             </div>
           </div>
         </div>
@@ -134,7 +137,8 @@ export default function History() {
                   </span>
                   <button
                     onClick={() => handleViewContent(brief._id)}
-                    className="text-sm bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700"
+                    className="text-sm bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700 transition-colors focus:outline focus:outline-2 focus:outline-violet-500"
+                    aria-label={expandedId === brief._id ? `Hide content for ${brief.featureName || brief.name || 'this brief'}` : `View content for ${brief.featureName || brief.name || 'this brief'}`}
                   >
                     {expandedId === brief._id ? 'Hide' : 'View Content'}
                   </button>
@@ -144,8 +148,11 @@ export default function History() {
               {expandedId === brief._id && (
                 <div className="border-t border-gray-200 dark:border-gray-700 p-4">
                   {contentLoading ? (
-                    <div className="flex justify-center py-4">
-                      <div className="animate-spin text-2xl">⏳</div>
+                    <div className="flex justify-center py-4" role="status" aria-label="Loading content">
+                      <svg className="animate-spin h-6 w-6 text-violet-600 dark:text-violet-400" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
                     </div>
                   ) : expandedContent ? (
                     <ContentPreview captions={expandedContent} isLoading={false} />

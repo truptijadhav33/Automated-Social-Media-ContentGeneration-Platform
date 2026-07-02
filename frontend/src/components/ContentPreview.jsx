@@ -25,10 +25,13 @@ export default function ContentPreview({ captions, isLoading }) {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex justify-center items-center h-64" role="status" aria-label="Generating content, please wait">
         <div className="text-center">
-          <div className="animate-spin text-4xl mb-4">⏳</div>
-          <p>Generating content...</p>
+          <svg className="animate-spin h-8 w-8 mx-auto mb-4 text-violet-600 dark:text-violet-400" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
+          <p className="text-slate-600 dark:text-slate-400">Generating content...</p>
         </div>
       </div>
     );
@@ -36,7 +39,7 @@ export default function ContentPreview({ captions, isLoading }) {
 
   if (!captions) {
     return (
-      <div className="p-6 text-center text-gray-500">
+      <div className="p-6 text-center text-slate-500 dark:text-slate-400">
         Fill out the form and click "Generate Content" to see results here
       </div>
     );

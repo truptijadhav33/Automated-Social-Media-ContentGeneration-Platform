@@ -1,10 +1,10 @@
 const express = require('express');
 const FeatureBrief = require('../models/FeatureBrief');
 const GeneratedContent = require('../models/GeneratedContent');
-const validateBrief = require('../middleware/validateBrief');
+const validateInputs = require('../middleware/inputValidation');
 const router = express.Router();
 
-router.post('/', validateBrief, async (req, res) => {
+router.post('/', validateInputs, async (req, res) => {
   try {
     const { featureName, description, keyBenefit, platforms, tone } = req.body;
 

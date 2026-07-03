@@ -1,5 +1,6 @@
 import json
 import re
+import html
 
 from openai import OpenAI
 from openai import (
@@ -7,6 +8,13 @@ from openai import (
     RateLimitError,
     APIError,
 )
+
+
+def _sanitize(text: str) -> str:
+    """Escape HTML entities and strip control characters to prevent prompt injection."""
+    text = html.escape(text)
+    text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", text)
+    return text.strip()
 
 
 class LLMEngine:
@@ -64,9 +72,9 @@ class LLMEngine:
 You are a social media content strategist. Write a post announcing a new feature.
 
 FEATURE BRIEF
-- Name: {brief.get('name', 'Untitled Feature')}
-- Description: {brief.get('description', '')}
-- Key Benefit: {brief.get('benefit', '')}
+- Name: {_sanitize(brief.get('name', 'Untitled Feature'))}
+- Description: {_sanitize(brief.get('description', ''))}
+- Key Benefit: {_sanitize(brief.get('benefit', ''))}
 - Target Platforms: {', '.join(brief.get('platforms', ['web']))}
 - Tone: {tone}
 

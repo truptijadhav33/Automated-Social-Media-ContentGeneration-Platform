@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 from pydantic import BaseModel
 
@@ -28,6 +29,10 @@ class CaptionRequest(BaseModel):
     key_benefit: str
     tone: str
     platform: str
+    model: str | None = None
+    temperature: float | None = None
+    system_prompt: str | None = None
+    max_tokens: int | None = None
 
 
 @app.on_event("startup")
@@ -53,7 +58,12 @@ async def generate_captions(request: CaptionRequest):
 
         start = time.time()
         result = llm_engine.generate_captions(
-            feature_brief, request.platform, request.tone
+            feature_brief,
+            request.platform,
+            request.tone,
+            temperature=request.temperature or 0.7,
+            max_tokens=request.max_tokens or 800,
+            system_prompt=request.system_prompt,
         )
         elapsed = time.time() - start
         logger.info(f"Generated {request.platform} caption in {elapsed:.2f}s")
@@ -75,3 +85,25 @@ async def generate_captions(request: CaptionRequest):
     except Exception as e:
         logger.error(f"Error generating caption: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/generate-captions-stream")
+async def generate_captions_stream(request: CaptionRequest):
+    feature_brief = {
+        "name": request.feature_name,
+        "description": request.description,
+        "benefit": request.key_benefit,
+    }
+
+    async def event_stream():
+        for sse_event in llm_engine.generate_captions_stream(
+            feature_brief,
+            request.platform,
+            request.tone,
+            temperature=request.temperature or 0.7,
+            max_tokens=request.max_tokens or 800,
+            system_prompt=request.system_prompt,
+        ):
+            yield sse_event
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")

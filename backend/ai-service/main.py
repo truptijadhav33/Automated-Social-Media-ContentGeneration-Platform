@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 from pydantic import BaseModel
 
@@ -75,3 +76,20 @@ async def generate_captions(request: CaptionRequest):
     except Exception as e:
         logger.error(f"Error generating caption: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/generate-captions-stream")
+async def generate_captions_stream(request: CaptionRequest):
+    feature_brief = {
+        "name": request.feature_name,
+        "description": request.description,
+        "benefit": request.key_benefit,
+    }
+
+    async def event_stream():
+        for sse_event in llm_engine.generate_captions_stream(
+            feature_brief, request.platform, request.tone
+        ):
+            yield sse_event
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")

@@ -1,6 +1,28 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+const preferenceSchema = new mongoose.Schema({
+  model: {
+    type: String,
+    enum: ['gpt-4', 'gpt-3.5-turbo'],
+    default: 'gpt-4',
+  },
+  temperature: {
+    type: Number,
+    min: 0.0,
+    max: 1.0,
+    default: 0.7,
+  },
+  systemPrompt: {
+    type: String,
+    default: 'You are a social media expert. Write engaging, platform-optimized posts.',
+  },
+  maxTokens: {
+    type: Number,
+    default: 500,
+  },
+}, { _id: false });
+
 const userSchema = new mongoose.Schema({
   name: String,
   email: {
@@ -12,6 +34,10 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+  },
+  preferences: {
+    type: preferenceSchema,
+    default: () => ({}),
   },
   createdAt: {
     type: Date,

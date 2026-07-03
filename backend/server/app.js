@@ -18,6 +18,7 @@ app.use('/api', tempAuth);
 
 app.use('/api/content', require('./routes/content'));
 app.use('/api/briefs', require('./routes/briefs'));
+app.use('/api/settings', require('./routes/settings'));
 
 // Health check
 app.get('/health', (_req, res) => {

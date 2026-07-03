@@ -29,6 +29,10 @@ class CaptionRequest(BaseModel):
     key_benefit: str
     tone: str
     platform: str
+    model: str | None = None
+    temperature: float | None = None
+    system_prompt: str | None = None
+    max_tokens: int | None = None
 
 
 @app.on_event("startup")
@@ -54,7 +58,12 @@ async def generate_captions(request: CaptionRequest):
 
         start = time.time()
         result = llm_engine.generate_captions(
-            feature_brief, request.platform, request.tone
+            feature_brief,
+            request.platform,
+            request.tone,
+            temperature=request.temperature or 0.7,
+            max_tokens=request.max_tokens or 800,
+            system_prompt=request.system_prompt,
         )
         elapsed = time.time() - start
         logger.info(f"Generated {request.platform} caption in {elapsed:.2f}s")
@@ -88,7 +97,12 @@ async def generate_captions_stream(request: CaptionRequest):
 
     async def event_stream():
         for sse_event in llm_engine.generate_captions_stream(
-            feature_brief, request.platform, request.tone
+            feature_brief,
+            request.platform,
+            request.tone,
+            temperature=request.temperature or 0.7,
+            max_tokens=request.max_tokens or 800,
+            system_prompt=request.system_prompt,
         ):
             yield sse_event
 

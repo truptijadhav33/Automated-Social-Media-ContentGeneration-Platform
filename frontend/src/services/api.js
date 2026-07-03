@@ -32,20 +32,20 @@ api.interceptors.response.use(
 
 export const apiService = {
   // Briefs
-  submitBrief: (data) => api.post('/briefs', data),
-  getBrief: (id) => api.get(`/briefs/${id}`),
-  getBriefs: () => api.get('/briefs'),
-  getBriefContent: (briefId) => api.get(`/briefs/${briefId}/content`),
+  submitBrief: (data) => api.post('/api/briefs', data),
+  getBrief: (id) => api.get(`/api/briefs/${id}`),
+  getBriefs: () => api.get('/api/briefs'),
+  getBriefContent: (briefId) => api.get(`/api/briefs/${briefId}/content`),
   
   // Content generation
   generateContent: (briefId, tone, platforms) =>
-    api.post('/content/generate', {
+    api.post('/api/content/generate', {
       briefId,
       tone,
       platforms
     }),
   
-  getContent: (briefId) => api.get(`/content/${briefId}`),
+  getContent: (briefId) => api.get(`/api/content/${briefId}`),
   
   // Variant selection
   selectVariant: (contentId, variantIndex) =>
@@ -57,7 +57,7 @@ export const apiService = {
 
   // Publishing (later)
   publishToSocial: (contentId, platforms) =>
-    api.post('/publish', { contentId, platforms })
+    api.post('/api/publish', { contentId, platforms })
 };
 
 export default api;

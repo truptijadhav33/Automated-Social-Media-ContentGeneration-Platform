@@ -99,6 +99,7 @@ Return valid JSON with these keys:
         feature_brief: dict,
         platform: str = "linkedin",
         tone: str = "informative",
+        model: str = "llama-3.3-70b-versatile",
         temperature: float = 0.7,
         max_tokens: int = 800,
         system_prompt: str | None = None,
@@ -124,7 +125,7 @@ Return valid JSON with these keys:
 
         try:
             response = self.client.chat.completions.create(
-                model=self.model,
+                model=model,
                 messages=[
                     {"role": "system", "content": system_msg},
                     {"role": "user", "content": prompt},
@@ -164,6 +165,7 @@ Return valid JSON with these keys:
         feature_brief: dict,
         platform: str = "linkedin",
         tone: str = "informative",
+        model: str = "llama-3.3-70b-versatile",
         temperature: float = 0.7,
         max_tokens: int = 800,
         system_prompt: str | None = None,
@@ -178,7 +180,7 @@ Return valid JSON with these keys:
 
         try:
             stream = self.client.chat.completions.create(
-                model=self.model,
+                model=model,
                 messages=[
                     {"role": "system", "content": system_msg},
                     {"role": "user", "content": prompt},

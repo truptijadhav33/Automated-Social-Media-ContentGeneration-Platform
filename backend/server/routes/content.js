@@ -1,6 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const GeneratedContent = require('../models/GeneratedContent');
+const User = require('../models/User');
 const validateGenerate = require('../middleware/validateGenerate');
 const router = express.Router();
 
@@ -20,6 +21,9 @@ router.post('/generate', validateGenerate, async (req, res) => {
       });
     }
 
+    const user = await User.findById(req.user.id).select('preferences');
+    const prefs = user?.preferences || {};
+
     const results = {};
 
     const captionPromises = platforms.map(async (platform) => {
@@ -33,6 +37,10 @@ router.post('/generate', validateGenerate, async (req, res) => {
             key_benefit: brief.keyBenefit,
             tone: tone || brief.tone,
             platform: platform,
+            model: prefs.model || 'llama-3.3-70b-versatile',
+            temperature: prefs.temperature ?? 0.7,
+            max_tokens: prefs.maxTokens || 500,
+            system_prompt: prefs.systemPrompt || null,
           },
           { timeout: 30000 }
         );
@@ -44,7 +52,7 @@ router.post('/generate', validateGenerate, async (req, res) => {
 
           const content = new GeneratedContent({
             briefId: briefId,
-            userId: req.user?.id || 'temp-user-001',
+            userId: req.user.id,
             platform: platform,
             caption: response.data.data.caption,
             hashtags: response.data.data.hashtags,

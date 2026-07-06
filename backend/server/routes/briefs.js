@@ -9,7 +9,7 @@ router.post('/', validateInputs, async (req, res) => {
     const { featureName, description, keyBenefit, platforms, tone } = req.body;
 
     const brief = new FeatureBrief({
-      userId: req.user?.id || 'temp-user-001',
+      userId: req.user.id,
       featureName,
       description,
       keyBenefit,
@@ -31,7 +31,7 @@ router.post('/', validateInputs, async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const briefs = await FeatureBrief.find().sort({ createdAt: -1 });
+    const briefs = await FeatureBrief.find({ userId: req.user.id }).sort({ createdAt: -1 });
     res.json({ briefs });
   } catch (error) {
     res.status(500).json({ error: error.message });

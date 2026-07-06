@@ -2,21 +2,30 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BaseLayout from "./components/BaseLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Launch from "./pages/Launch";
 import History from "./pages/History";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Home from "./pages/Home";
 
 function App() {
   return (
     <BrowserRouter>
       <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route element={<BaseLayout />}>
+          <Route path="/" element={<Home />} />
           <Route
-            path="/"
-            element={<h1 className="text-2xl font-bold">Home</h1>}
+            path="/launch"
+            element={<ProtectedRoute><Launch /></ProtectedRoute>}
           />
-          <Route path="/launch" element={<Launch />} />
-          <Route path="/history" element={<History />} />
+          <Route
+            path="/history"
+            element={<ProtectedRoute><History /></ProtectedRoute>}
+          />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -31,6 +31,10 @@ api.interceptors.response.use(
 );
 
 export const apiService = {
+  // Auth
+  login: (email, password) => api.post('/api/auth/login', { email, password }),
+  register: (name, email, password) => api.post('/api/auth/register', { name, email, password }),
+
   // Briefs
   submitBrief: (data) => api.post('/api/briefs', data),
   getBrief: (id) => api.get(`/api/briefs/${id}`),

@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useAuth } from "../context/AuthContext";
 
 const navItems = [
   { to: "/", label: "Home" },
@@ -16,6 +18,8 @@ function getInitialDark() {
 }
 
 export default function BaseLayout() {
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dark, setDark] = useState(false);
 
@@ -42,6 +46,12 @@ export default function BaseLayout() {
     localStorage.setItem(STORAGE_KEY, next);
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+    toast.success('Logged out');
+  };
+
   return (
     <div className="min-h-screen grid grid-rows-[auto_1fr] grid-cols-1 md:grid-cols-[240px_1fr] bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 xl:max-w-[1200px] xl:mx-auto xl:border-x xl:border-slate-200 xl:dark:border-slate-700">
       {/* Navbar */}
@@ -62,6 +72,25 @@ export default function BaseLayout() {
         <span className="hidden sm:block text-sm font-medium truncate mx-4">
           Automated Social Media Content Generator
         </span>
+
+        <div className="flex items-center gap-3 ml-auto mr-2">
+          {isAuthenticated ? (
+            <>
+              <span className="hidden sm:inline text-sm font-medium">Hi, {user?.name}</span>
+              <button
+                onClick={handleLogout}
+                className="text-sm px-3 py-1.5 rounded bg-violet-500 hover:bg-violet-400 transition-colors min-h-[44px]"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink to="/login" className="text-sm font-medium hover:underline min-h-[44px] flex items-center px-2">Sign in</NavLink>
+              <NavLink to="/register" className="text-sm px-3 py-1.5 rounded bg-violet-500 hover:bg-violet-400 transition-colors min-h-[44px] flex items-center">Register</NavLink>
+            </>
+          )}
+        </div>
 
         <button
           onClick={toggleDark}
@@ -119,6 +148,23 @@ export default function BaseLayout() {
               {item.label}
             </NavLink>
           ))}
+          <hr className="my-2 border-slate-200 dark:border-slate-700" />
+          {isAuthenticated ? (
+            <div className="px-4 py-2 text-sm text-slate-500 dark:text-slate-400">
+              Signed in as <span className="font-medium text-slate-700 dark:text-slate-300">{user?.name}</span>
+              <button
+                onClick={() => { handleLogout(); setSidebarOpen(false); }}
+                className="block mt-2 text-left text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline min-h-[44px]"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-1 px-3">
+              <NavLink to="/login" onClick={() => setSidebarOpen(false)} className="flex items-center min-h-[44px] px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">Sign in</NavLink>
+              <NavLink to="/register" onClick={() => setSidebarOpen(false)} className="flex items-center min-h-[44px] px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">Register</NavLink>
+            </div>
+          )}
         </nav>
       </aside>
 

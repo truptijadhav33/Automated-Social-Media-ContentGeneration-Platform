@@ -1,9 +1,18 @@
 const mongoose = require('mongoose');
 
-async function connectDB() {
-  const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/social-media';
-  await mongoose.connect(uri);
-  console.log('MongoDB connected');
-}
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 30000,
+      socketTimeoutMS: 45000,
+      tls: true,
+      tlsAllowInvalidCertificates: false,
+    });
+    console.log('✓ MongoDB connected');
+  } catch (err) {
+    console.error('✗ MongoDB connection error:', err.message);
+    process.exit(1);
+  }
+};
 
 module.exports = { connectDB };

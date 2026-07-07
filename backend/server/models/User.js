@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const preferenceSchema = new mongoose.Schema({
-  model: {
+    model: {
     type: String,
-    enum: ['gpt-4', 'gpt-3.5-turbo'],
-    default: 'gpt-4',
+    enum: ['llama-3.3-70b-versatile'],
+    default: 'llama-3.3-70b-versatile',
   },
   temperature: {
     type: Number,

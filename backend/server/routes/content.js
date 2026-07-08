@@ -5,7 +5,9 @@ const User = require('../models/User');
 const validateGenerate = require('../middleware/validateGenerate');
 const router = express.Router();
 
-const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+const PYTHON_AI_SERVICE_URL = (process.env.PYTHON_AI_SERVICE_URL || 'http://localhost:8000').replace(/\/$/, '');
+
+console.log('=== PYTHON_AI_SERVICE_URL ===', PYTHON_AI_SERVICE_URL);
 
 router.post('/generate', validateGenerate, async (req, res) => {
   try {
@@ -30,7 +32,7 @@ router.post('/generate', validateGenerate, async (req, res) => {
       const start = Date.now();
       try {
         const response = await axios.post(
-          `${AI_SERVICE_URL}/generate-captions`,
+          `${PYTHON_AI_SERVICE_URL}/generate-captions`,
           {
             feature_name: brief.featureName,
             description: brief.description,

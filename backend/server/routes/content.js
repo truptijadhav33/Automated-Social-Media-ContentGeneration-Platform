@@ -8,6 +8,7 @@ const router = express.Router();
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
 router.post('/generate', validateGenerate, async (req, res) => {
+  console.log('AI Service URL:', process.env.AI_SERVICE_URL || '(not set, using localhost:8000)');
   try {
     const { briefId, tone, platforms } = req.body;
 

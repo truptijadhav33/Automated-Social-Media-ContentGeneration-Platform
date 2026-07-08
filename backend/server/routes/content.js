@@ -65,8 +65,10 @@ router.post('/generate', validateGenerate, async (req, res) => {
           await content.save();
         }
       } catch (error) {
-        console.error(`Error generating ${platform} caption:`, error.message);
-        results[platform] = { error: error.message };
+        const errMsg = error.message || error.code || JSON.stringify(error) || 'unknown';
+        const errDetail = error.response?.data || error.cause || '';
+        console.error(`Error generating ${platform} caption:`, errMsg, errDetail);
+        results[platform] = { error: errMsg };
       }
     });
 

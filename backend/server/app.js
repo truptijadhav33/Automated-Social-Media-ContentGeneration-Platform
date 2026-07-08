@@ -5,6 +5,9 @@ require('dotenv').config();
 
 const app = express();
 
+// Trust proxy (Railway sits behind a proxy, needed for rate limiter IP detection)
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(cors());
 app.use(express.json());

@@ -38,7 +38,20 @@ export default function History() {
     setExpandedContent(null);
     try {
       const res = await apiService.getBriefContent(briefId);
-      setExpandedContent(res.data?.captions || res.data);
+      const contentArray = res.data?.content;
+      if (Array.isArray(contentArray)) {
+        const captions = {};
+        contentArray.forEach(item => {
+          captions[item.platform] = {
+            caption: item.caption,
+            hashtags: item.hashtags || [],
+            variants: item.variants || [],
+          };
+        });
+        setExpandedContent(captions);
+      } else {
+        setExpandedContent({});
+      }
     } catch {
       toast.error('Failed to load content');
       setExpandedId(null);

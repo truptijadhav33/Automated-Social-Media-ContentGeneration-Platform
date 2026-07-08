@@ -7,6 +7,7 @@ const navItems = [
   { to: "/", label: "Home" },
   { to: "/launch", label: "New Launch" },
   { to: "/history", label: "History" },
+  { to: "/settings", label: "Settings" },
 ];
 
 const STORAGE_KEY = "socialgen-dark-mode";
@@ -53,7 +54,7 @@ export default function BaseLayout() {
   };
 
   return (
-    <div className="min-h-screen grid grid-rows-[auto_1fr] grid-cols-1 md:grid-cols-[240px_1fr] bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 xl:max-w-[1200px] xl:mx-auto xl:border-x xl:border-slate-200 xl:dark:border-slate-700">
+    <div className="min-h-screen grid grid-rows-[auto_1fr] grid-cols-1 md:grid-cols-[240px_1fr] bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 xl:border-x xl:border-slate-200 xl:dark:border-slate-700">
       {/* Navbar */}
       <header className="md:col-span-2 flex items-center justify-between px-4 py-3 bg-violet-600 dark:bg-violet-800 text-white shadow-sm">
         <div className="flex items-center gap-3">

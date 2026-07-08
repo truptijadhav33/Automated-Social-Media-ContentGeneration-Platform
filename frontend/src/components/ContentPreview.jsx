@@ -217,7 +217,8 @@ export default function ContentPreview({ captions, isLoading }) {
         }
 
         const activeIndex = selectedVariant[platform];
-        const displayText = activeIndex >= 0 ? data.variants[activeIndex] : data.caption;
+        const caption = data.caption || data.text || data.content || '';
+        const displayText = activeIndex >= 0 ? (data.variants?.[activeIndex] || caption) : caption;
         const statusData = statusOverrides[platform] ?? data;
         const currentStatus = statusData.status || "draft";
         const displayScheduledFor = statusData.scheduledFor;

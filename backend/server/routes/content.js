@@ -65,9 +65,10 @@ router.post('/generate', validateGenerate, async (req, res) => {
           await content.save();
         }
       } catch (error) {
-        const msg = error.message || error.code || error.response?.data?.detail || 'AI service error';
-        console.error(`Error generating ${platform} caption:`, msg, error.code || '');
-        results[platform] = { error: msg };
+        const errMsg = error.message || error.code || JSON.stringify(error) || 'unknown';
+        const errDetail = error.response?.data || error.cause || '';
+        console.error(`Error generating ${platform} caption:`, errMsg, errDetail);
+        results[platform] = { error: errMsg };
       }
     });
 

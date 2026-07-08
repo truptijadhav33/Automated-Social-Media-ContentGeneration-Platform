@@ -5,6 +5,7 @@ import BaseLayout from "./components/BaseLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Launch from "./pages/Launch";
 import History from "./pages/History";
+import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
@@ -25,6 +26,10 @@ function App() {
           <Route
             path="/history"
             element={<ProtectedRoute><History /></ProtectedRoute>}
+          />
+          <Route
+            path="/settings"
+            element={<ProtectedRoute><Settings /></ProtectedRoute>}
           />
         </Route>
       </Routes>

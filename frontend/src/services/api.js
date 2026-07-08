@@ -59,6 +59,10 @@ export const apiService = {
   updateStatus: (contentId, status, scheduledFor) =>
     api.put(`/api/content/${contentId}/status`, { status, scheduledFor }),
 
+  // Settings
+  getSettings: () => api.get('/api/settings'),
+  saveSettings: (data) => api.put('/api/settings', data),
+
   // Publishing (later)
   publishToSocial: (contentId, platforms) =>
     api.post('/api/publish', { contentId, platforms })

@@ -48,8 +48,6 @@ router.post('/generate', validateGenerate, async (req, res) => {
         console.log(`[Groq] ${platform} caption generated in ${elapsed}ms`);
 
         if (response.data.success) {
-          results[platform] = response.data.data;
-
           const content = new GeneratedContent({
             briefId: briefId,
             userId: req.user.id,
@@ -63,6 +61,11 @@ router.post('/generate', validateGenerate, async (req, res) => {
           });
 
           await content.save();
+
+          results[platform] = {
+            ...response.data.data,
+            _id: content._id,
+          };
         }
       } catch (error) {
         console.error(`Error generating ${platform} caption:`, error.message);

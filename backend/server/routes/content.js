@@ -65,8 +65,9 @@ router.post('/generate', validateGenerate, async (req, res) => {
           await content.save();
         }
       } catch (error) {
-        console.error(`Error generating ${platform} caption:`, error.message);
-        results[platform] = { error: error.message };
+        const msg = error.message || error.code || error.response?.data?.detail || 'AI service error';
+        console.error(`Error generating ${platform} caption:`, msg, error.code || '');
+        results[platform] = { error: msg };
       }
     });
 

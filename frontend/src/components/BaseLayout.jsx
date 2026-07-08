@@ -54,7 +54,7 @@ export default function BaseLayout() {
   };
 
   return (
-    <div className="min-h-screen max-w-screen-2xl mx-auto bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 xl:border-x xl:border-slate-200 xl:dark:border-slate-700 grid grid-rows-[auto_1fr] grid-cols-1 md:grid-cols-[240px_1fr]">
+    <div className="min-h-screen md:h-screen max-w-screen-2xl mx-auto bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 xl:border-x xl:border-slate-200 xl:dark:border-slate-700 grid grid-rows-[auto_1fr] grid-cols-1 md:grid-cols-[240px_1fr]">
       {/* Navbar */}
       <header className="md:col-span-2 flex items-center justify-between px-4 py-3 bg-violet-600 dark:bg-violet-800 text-white shadow-sm">
         <div className="flex items-center gap-3">
@@ -127,7 +127,7 @@ export default function BaseLayout() {
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
           md:translate-x-0
           bg-slate-50 dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700
-          pt-4 pb-6 overflow-y-auto
+          pt-4 pb-6 overflow-y-auto md:overflow-y-auto
         `}
         aria-label="Main navigation"
       >
@@ -170,7 +170,7 @@ export default function BaseLayout() {
       </aside>
 
       {/* Main content */}
-      <main className="p-4 sm:p-6 overflow-auto" id="main-content">
+      <main className="p-4 sm:p-6 overflow-y-auto" id="main-content">
         <Outlet />
       </main>
     </div>

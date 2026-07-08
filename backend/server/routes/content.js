@@ -5,9 +5,7 @@ const User = require('../models/User');
 const validateGenerate = require('../middleware/validateGenerate');
 const router = express.Router();
 
-const PYTHON_AI_SERVICE_URL = (process.env.PYTHON_AI_SERVICE_URL || 'http://localhost:8000').replace(/\/$/, '');
-
-console.log('=== PYTHON_AI_SERVICE_URL ===', PYTHON_AI_SERVICE_URL);
+const PYTHON_AI_SERVICE_URL = 'https://aware-consideration-production-ab95.up.railway.app';
 
 router.post('/generate', validateGenerate, async (req, res) => {
   try {

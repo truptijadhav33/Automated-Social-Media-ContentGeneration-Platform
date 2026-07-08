@@ -155,6 +155,7 @@ Return valid JSON with these keys:
                 "char_count": len(raw),
             }
 
+        result.setdefault("caption", "")
         result.setdefault("hashtags", [])
         result.setdefault("variants", [])
         result.setdefault("char_count", len(result.get("caption", "")))

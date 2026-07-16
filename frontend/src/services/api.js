@@ -41,6 +41,10 @@ export const apiService = {
   // Auth
   login: (email, password) => api.post('/api/auth/login', { email, password }),
   register: (name, email, password) => api.post('/api/auth/register', { name, email, password }),
+  forgotPassword: (email) => api.post('/api/auth/forgot-password', { email }),
+  resetPassword: (token, password) => api.post('/api/auth/reset-password', { token, password }),
+  verifyEmail: (token) => api.post('/api/auth/verify-email', { token }),
+  resendVerification: (email) => api.post('/api/auth/resend-verification', { email }),
 
   // Briefs
   submitBrief: (data) => api.post('/api/briefs', data),

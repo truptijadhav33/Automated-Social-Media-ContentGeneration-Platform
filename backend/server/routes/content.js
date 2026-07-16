@@ -48,8 +48,6 @@ router.post('/generate', validateGenerate, async (req, res) => {
         console.log(`[Groq] ${platform} caption generated in ${elapsed}ms`);
 
         if (response.data.success) {
-          results[platform] = response.data.data;
-
           const content = new GeneratedContent({
             briefId: briefId,
             userId: req.user.id,
@@ -63,6 +61,11 @@ router.post('/generate', validateGenerate, async (req, res) => {
           });
 
           await content.save();
+
+          results[platform] = {
+            ...response.data.data,
+            _id: content._id,
+          };
         }
       } catch (error) {
         const errMsg = error.message || error.code || JSON.stringify(error) || 'unknown';
@@ -91,6 +94,16 @@ router.post('/generate', validateGenerate, async (req, res) => {
 
 router.get('/:briefId', async (req, res) => {
   try {
+    const FeatureBrief = require('../models/FeatureBrief');
+    const brief = await FeatureBrief.findOne({
+      _id: req.params.briefId,
+      userId: req.user.id,
+    });
+
+    if (!brief) {
+      return res.status(404).json({ success: false, error: 'Brief not found' });
+    }
+
     const content = await GeneratedContent.find({ briefId: req.params.briefId });
     res.json({ success: true, content });
   } catch (error) {

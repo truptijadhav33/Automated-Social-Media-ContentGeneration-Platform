@@ -42,7 +42,7 @@ router.get('/:briefId/content', async (req, res) => {
   try {
     const brief = await FeatureBrief.findOne({
       _id: req.params.briefId,
-      userId: req.user.id
+      userId: req.user.id,
     });
 
     if (!brief) {

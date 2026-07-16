@@ -226,7 +226,14 @@ Return valid JSON with these keys:
                 temperature=temperature,
                 max_tokens=500,
             )
-            variants.append(response.choices[0].message.content)
+            raw = response.choices[0].message.content.strip()
+            cleaned = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw, flags=re.DOTALL).strip()
+            try:
+                parsed = json.loads(cleaned)
+                caption = parsed.get("caption", raw)
+            except json.JSONDecodeError:
+                caption = raw
+            variants.append(caption)
         return variants
 
 

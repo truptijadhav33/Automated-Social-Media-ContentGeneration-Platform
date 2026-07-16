@@ -166,8 +166,13 @@ export default function ContentPreview({ captions, isLoading }) {
     setSchedulingPlatform(null);
     setScheduleValue("");
     try {
-      await apiService.updateStatus(data._id, newStatus, scheduledFor);
-      toast.success(`Content marked as ${newStatus}`);
+      if (newStatus === "published" && data._id) {
+        await apiService.publishToSocial(data._id);
+        toast.success(`Published to ${platform}`);
+      } else {
+        await apiService.updateStatus(data._id, newStatus, scheduledFor);
+        toast.success(`Content marked as ${newStatus}`);
+      }
     } catch (err) {
       if (prev) {
         setStatusOverrides((o) => ({ ...o, [platform]: prev }));

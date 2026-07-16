@@ -70,9 +70,9 @@ export const apiService = {
   getSettings: () => api.get('/api/settings'),
   saveSettings: (data) => api.put('/api/settings', data),
 
-  // Publishing (later)
-  publishToSocial: (contentId, platforms) =>
-    api.post('/api/publish', { contentId, platforms })
+  // Publishing
+  publishToSocial: (contentId) =>
+    api.post(`/api/content/${contentId}/publish`)
 };
 
 export default api;

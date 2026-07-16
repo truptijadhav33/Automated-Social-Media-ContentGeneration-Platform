@@ -3,6 +3,7 @@ const axios = require('axios');
 const GeneratedContent = require('../models/GeneratedContent');
 const User = require('../models/User');
 const validateGenerate = require('../middleware/validateGenerate');
+const { publish } = require('../services/publishService');
 const router = express.Router();
 
 const PYTHON_AI_SERVICE_URL = 'https://aware-consideration-production-ab95.up.railway.app';
@@ -171,6 +172,46 @@ router.put('/:contentId/status', async (req, res) => {
     res.json({ message: 'Status updated', data: doc });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/:contentId/publish', async (req, res) => {
+  try {
+    const doc = await GeneratedContent.findById(req.params.contentId);
+    if (!doc) return res.status(404).json({ success: false, error: 'Content not found' });
+
+    if (doc.userId.toString() !== req.user.id) {
+      return res.status(403).json({ success: false, error: 'Not authorized' });
+    }
+
+    const result = await publish(doc.platform, {
+      caption: doc.caption,
+      hashtags: doc.hashtags,
+    });
+
+    doc.publishStatus = 'published';
+    doc.publishedAt = new Date();
+    doc.scheduledFor = undefined;
+    doc.publishResult = {
+      platformPostId: result.platformPostId,
+      platformUrl: result.platformUrl,
+      publishedAt: new Date(),
+    };
+    doc.updatedAt = new Date();
+    await doc.save();
+
+    res.json({ success: true, data: doc, publishResult: result });
+  } catch (error) {
+    console.error('Publish error:', error.message);
+
+    const doc = await GeneratedContent.findById(req.params.contentId);
+    if (doc) {
+      doc.publishResult = { error: error.message, publishedAt: new Date() };
+      doc.updatedAt = new Date();
+      await doc.save();
+    }
+
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 

@@ -32,6 +32,12 @@ const GeneratedContentSchema = new mongoose.Schema({
   publishedAt: Date,
   scheduledFor: Date,
   apiResponse: mongoose.Schema.Types.Mixed,
+  publishResult: {
+    platformPostId: String,
+    platformUrl: String,
+    error: String,
+    publishedAt: Date,
+  },
   createdAt: {
     type: Date,
     default: Date.now

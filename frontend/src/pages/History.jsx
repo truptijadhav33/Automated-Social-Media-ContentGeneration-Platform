@@ -43,6 +43,7 @@ export default function History() {
         const captions = {};
         contentArray.forEach(item => {
           captions[item.platform] = {
+            _id: item._id,
             caption: item.caption,
             hashtags: item.hashtags || [],
             variants: item.variants || [],

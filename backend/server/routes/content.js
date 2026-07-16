@@ -5,7 +5,7 @@ const User = require('../models/User');
 const validateGenerate = require('../middleware/validateGenerate');
 const router = express.Router();
 
-const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+const PYTHON_AI_SERVICE_URL = 'https://aware-consideration-production-ab95.up.railway.app';
 
 router.post('/generate', validateGenerate, async (req, res) => {
   try {
@@ -30,7 +30,7 @@ router.post('/generate', validateGenerate, async (req, res) => {
       const start = Date.now();
       try {
         const response = await axios.post(
-          `${AI_SERVICE_URL}/generate-captions`,
+          `${PYTHON_AI_SERVICE_URL}/generate-captions`,
           {
             feature_name: brief.featureName,
             description: brief.description,
@@ -68,8 +68,10 @@ router.post('/generate', validateGenerate, async (req, res) => {
           };
         }
       } catch (error) {
-        console.error(`Error generating ${platform} caption:`, error.message);
-        results[platform] = { error: error.message };
+        const errMsg = error.message || error.code || JSON.stringify(error) || 'unknown';
+        const errDetail = error.response?.data || error.cause || '';
+        console.error(`Error generating ${platform} caption:`, errMsg, errDetail);
+        results[platform] = { error: errMsg };
       }
     });
 

@@ -49,10 +49,11 @@ router.get('/:briefId/content', async (req, res) => {
       return res.status(404).json({ error: 'Brief not found' });
     }
 
-    const docs = await GeneratedContent.find({ briefId: req.params.briefId });
-    res.json({ data: docs });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const content = await GeneratedContent.find({ briefId: req.params.briefId });
+
+    res.json({ success: true, content });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 

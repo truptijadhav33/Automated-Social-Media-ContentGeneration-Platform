@@ -40,6 +40,15 @@ router.get('/', async (req, res) => {
 
 router.get('/:briefId/content', async (req, res) => {
   try {
+    const brief = await FeatureBrief.findOne({
+      _id: req.params.briefId,
+      userId: req.user.id,
+    });
+
+    if (!brief) {
+      return res.status(404).json({ error: 'Brief not found' });
+    }
+
     const docs = await GeneratedContent.find({ briefId: req.params.briefId });
     res.json({ data: docs });
   } catch (err) {

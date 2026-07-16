@@ -23,8 +23,15 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      console.log('Unauthorized — redirecting to login');
-      // Later: redirect to login page
+      const url = error.config?.url || '';
+      const isAuthRoute = url.includes('/api/auth/login') || url.includes('/api/auth/register');
+      const isOnAuthPage = window.location.pathname === '/login' || window.location.pathname === '/register';
+
+      if (!isAuthRoute && !isOnAuthPage) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('authUser');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

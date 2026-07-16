@@ -92,6 +92,16 @@ router.post('/generate', validateGenerate, async (req, res) => {
 
 router.get('/:briefId', async (req, res) => {
   try {
+    const FeatureBrief = require('../models/FeatureBrief');
+    const brief = await FeatureBrief.findOne({
+      _id: req.params.briefId,
+      userId: req.user.id,
+    });
+
+    if (!brief) {
+      return res.status(404).json({ success: false, error: 'Brief not found' });
+    }
+
     const content = await GeneratedContent.find({ briefId: req.params.briefId });
     res.json({ success: true, content });
   } catch (error) {
